@@ -1,80 +1,39 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Camera from "../components/Camera";
-import Spacer from "../components/Spacer";
 
-const exercise = () => {
-  let count = 10;
-  let status = 0;
+const Exercise = () => {
+  const count = 10;
+  const status = 0;
+
   return (
-    <SafeAreaView style={styles.page}>
-      <Spacer />
-      <Text style={styles.exerciseTitle}>Exercise name: Push ups</Text>
-      <Spacer height={80} />
-      <View style={styles.cameraFrame}>
+    <SafeAreaView className="flex-1 items-center bg-neutral-900 px-4">
+      <Text className="mt-6 text-2xl font-bold text-white text-center">
+        Exercise name: Push ups
+      </Text>
+
+      <View className="mt-10 h-[40%] w-[80%] border-2 border-white bg-white rounded-lg overflow-hidden">
         <Camera />
       </View>
-      <Spacer height={120} />
-      <Text style={styles.countTitle}>COUNT</Text>
-      <Text style={styles.count}>{count}</Text>
-      <Spacer />
-      <View style={styles.statusView}>
-        <Text style={styles.status}>Status: </Text>
-        {status === 0 ? (
-          <Text style={[styles.status, { color: "rgb(0, 255, 0)" }]}>
-            tracking
-          </Text>
-        ) : (
-          <Text style={[styles.status, { color: "rgb(255, 0, 0)" }]}>
-            Unmonitored
-          </Text>
-        )}
+
+      <Text className="mt-12 text-2xl font-bold text-neutral-300">COUNT</Text>
+
+      <Text className="text-6xl font-extrabold text-yellow-400">{count}</Text>
+
+      <View className="mt-8 flex-row items-center">
+        <Text className="text-2xl font-bold text-white">Status:</Text>
+
+        <Text
+          className={`ml-2 text-2xl font-bold ${
+            status === 0 ? "text-green-400" : "text-red-400"
+          }`}
+        >
+          {status === 0 ? "Tracking" : "Unmonitored"}
+        </Text>
       </View>
     </SafeAreaView>
   );
 };
 
-export default exercise;
-
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "#222",
-  },
-  exerciseTitle: {
-    fontWeight: "bold",
-    fontSize: 28,
-    color: "#fff",
-    textAlign: "center",
-  },
-  cameraFrame: {
-    height: "40%",
-    width: "80%",
-    border: "2px solid white",
-    backgroundColor: "#fff",
-  },
-  countTitle: {
-    fontWeight: "bold",
-    fontSize: 28,
-    color: "#dddddd",
-    textAlign: "center",
-  },
-  count: {
-    fontWeight: "bolder",
-    fontSize: 64,
-    color: "#ffe043",
-    textAlign: "center",
-    fontFamily: "console",
-  },
-  statusView: {
-    flexDirection: "row",
-  },
-  status: {
-    fontWeight: "bold",
-    fontSize: 28,
-    color: "#fff",
-    textAlign: "center",
-  },
-});
+export default Exercise;

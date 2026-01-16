@@ -1,35 +1,21 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useColorScheme } from "react-native";
-import React from "react";
 
-const index = () => {
+const Index = () => {
   return (
-    <SafeAreaView style={styles.page}>
+    <SafeAreaView className="flex-1 items-center justify-center bg-neutral-900">
       <StatusBar style="light" />
-      <Link href="./exercise" style={styles.link}>
+
+      <Link
+        href="./exercise"
+        className="text-2xl font-bold text-white underline"
+      >
         Go to exercise page →
       </Link>
     </SafeAreaView>
   );
 };
 
-export default index;
-
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#222",
-  },
-  link: {
-    fontSize: 24,
-    fontWeight: "bold",
-    fontFamily: "Inter",
-    color: "#fff",
-    textDecorationLine: "underline",
-  },
-});
+export default Index;
