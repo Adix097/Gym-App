@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React from "react";
 
+import Camera from "../components/Camera";
 import Spacer from "../components/Spacer";
 
 const exercise = () => {
@@ -13,7 +13,7 @@ const exercise = () => {
       <Text style={styles.exerciseTitle}>Exercise name: Push ups</Text>
       <Spacer height={80} />
       <View style={styles.cameraFrame}>
-        <Text>Camera Frame</Text>
+        <Camera />
       </View>
       <Spacer height={120} />
       <Text style={styles.countTitle}>COUNT</Text>
