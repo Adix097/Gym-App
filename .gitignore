@@ -1,62 +1,81 @@
-# Node modules
+# ======================
+# Node / Expo / React Native
+# ======================
 node_modules/
 
-# npm logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Expo
 .expo/
 .expo-shared/
 
-# React Native
 ios/Pods/
 ios/build/
 android/.gradle/
 android/app/build/
 android/build/
 
-# Build output
 dist/
 build/
 
-# Bundler caches
 .expo/cache/
 metro-cache/
 *.metro
 
-# Env files
+# ======================
+# Logs
+# ======================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ======================
+# Environment variables
+# ======================
 .env
 .env.local
 .env.*.local
 
-# Logs
-*.log
-
-# IDEs
+# ======================
+# IDEs / Editors
+# ======================
 .vscode/
 .idea/
 *.sw?
 *.sublime-workspace
 *.sublime-project
 
-# Tailwind/NativeWind specific
-tailwind.config.js
-nativewind.config.js
+# ======================
+# Tailwind / NativeWind
+# ======================
+# IMPORTANT: config files MUST be committed
+# tailwind.config.js
+# nativewind.config.js
 
-# Python
+# ======================
+# Python / Backend
+# ======================
 venv/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.sqlite3
 *.egg-info/
 *.egg
 .Python
 pip-log.txt
 
-# start script
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Local JSON data (databases)
+backend/database/*.json
+
+# Allow example data
+!backend/database/*.example.json
+
+# ======================
+# Misc
+# ======================
 start.js

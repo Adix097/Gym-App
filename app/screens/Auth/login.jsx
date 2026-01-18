@@ -23,7 +23,7 @@ export default function Login() {
       const data = await res.json();
 
       if (res.ok) {
-        router.replace("/");
+        router.replace("/screens/dashboard");
       } else {
         setError(data.error || "Login failed");
       }
