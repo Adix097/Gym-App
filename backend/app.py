@@ -56,7 +56,6 @@ def login():
 
     user = User.query.filter_by(username=username).first()
     if user and check_password_hash(user.password, password):
-        # You can generate a real token later
         return jsonify({"token": "fake-jwt-token", "id": user.id}), 200
     return jsonify({"error": "Invalid credentials"}), 401
 
