@@ -57,3 +57,6 @@ __pycache__/
 *.egg
 .Python
 pip-log.txt
+
+# start script
+start.js

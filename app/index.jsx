@@ -1,25 +1,40 @@
 import { View, Text, Pressable } from "react-native";
-import { Link } from "expo-router";
-
-const exercises = ["Push Ups", "Plank"];
+import { useRouter } from "expo-router";
 
 export default function Index() {
+  const router = useRouter();
+
   return (
-    <View className="flex-1 bg-black px-4 pt-4">
-      <View className="flex-row justify-end mb-4">
-        <Link href="./login" asChild>
-          <Pressable hitSlop={10}>
-            <Text className="text-blue-400 font-semibold text-lg">LOGIN</Text>
-          </Pressable>
-        </Link>
-      </View>
-      {exercises.map((ex) => (
-        <Link key={ex} href={`/exercise/${ex.replace(" ", "-")}`} asChild>
-          <Pressable className="bg-white rounded-xl p-4 mb-3">
-            <Text className="text-lg font-semibold text-black">{ex}</Text>
-          </Pressable>
-        </Link>
-      ))}
+    <View className="flex-1 bg-black px-4 pt-8 justify-center">
+      <Text className="text-white text-2xl font-bold mb-8 text-center">
+        Welcome
+      </Text>
+
+      <Pressable
+        className="bg-white rounded-xl p-4 mb-4"
+        onPress={() => router.push("/screens/Auth/login")}
+      >
+        <Text className="text-black text-lg font-semibold text-center">
+          Login
+        </Text>
+      </Pressable>
+
+      <Pressable
+        className="bg-white rounded-xl p-4 mb-4"
+        onPress={() => router.push("/screens/Auth/register")}
+      >
+        <Text className="text-black text-lg font-semibold text-center">
+          Register
+        </Text>
+      </Pressable>
+
+      <Pressable
+        onPress={() => router.push("/screens/dashboard")}
+      >
+        <Text className="text-white text-lg font-semibold text-center">
+          Use Without Login
+        </Text>
+      </Pressable>
     </View>
   );
 }

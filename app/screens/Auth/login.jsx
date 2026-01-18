@@ -4,19 +4,17 @@ import { useRouter } from "expo-router";
 
 const BASE_URL = "http://192.168.1.8:5000";
 
-export default function Register() {
+export default function Login() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
-  async function handleRegister() {
+  async function handleLogin() {
     setError("");
-    setSuccess("");
 
     try {
-      const res = await fetch(`${BASE_URL}/register`, {
+      const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -25,10 +23,9 @@ export default function Register() {
       const data = await res.json();
 
       if (res.ok) {
-        setSuccess("Account created");
-        setTimeout(() => router.replace("/login"), 800);
+        router.replace("/");
       } else {
-        setError(data.error || "Registration failed");
+        setError(data.error || "Login failed");
       }
     } catch (err) {
       console.error(err);
@@ -38,10 +35,9 @@ export default function Register() {
 
   return (
     <View className="flex-1 justify-center px-6 bg-black">
-      <Text className="text-white text-2xl mb-6">Register</Text>
+      <Text className="text-white text-2xl mb-6">Login</Text>
 
       {error ? <Text className="text-red-500 mb-4">{error}</Text> : null}
-      {success ? <Text className="text-green-500 mb-4">{success}</Text> : null}
 
       <TextInput
         className="bg-white rounded px-4 py-3 mb-4"
@@ -60,16 +56,14 @@ export default function Register() {
       />
 
       <Pressable
-        onPress={handleRegister}
+        onPress={handleLogin}
         className="bg-green-500 py-3 rounded mb-4"
       >
-        <Text className="text-center font-bold text-black">Register</Text>
+        <Text className="text-center font-bold text-black">Login</Text>
       </Pressable>
 
-      <Pressable onPress={() => router.replace("/login")}>
-        <Text className="text-blue-400 text-center">
-          Already have an account?
-        </Text>
+      <Pressable onPress={() => router.replace("/screens/Auth/register")}>
+        <Text className="text-blue-400 text-center">Create account</Text>
       </Pressable>
     </View>
   );
