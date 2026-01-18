@@ -1,5 +1,6 @@
 # Node modules
 node_modules/
+
 # npm logs
 npm-debug.log*
 yarn-debug.log*
@@ -44,3 +45,15 @@ metro-cache/
 # Tailwind/NativeWind specific
 tailwind.config.js
 nativewind.config.js
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.egg-info/
+*.egg
+.Python
+pip-log.txt
