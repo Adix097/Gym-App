@@ -5,15 +5,18 @@ const exercises = ["Push Ups", "Plank"];
 
 export default function Index() {
   return (
-    <View className="flex-1 bg-black p-4">
+    <View className="flex-1 bg-black px-4 pt-4">
+      <View className="flex-row justify-end mb-4">
+        <Link href="./login" asChild>
+          <Pressable hitSlop={10}>
+            <Text className="text-blue-400 font-semibold text-lg">LOGIN</Text>
+          </Pressable>
+        </Link>
+      </View>
       {exercises.map((ex) => (
-        <Link
-          key={ex}
-          href={`/exercise/${ex.replace(" ", "-")}`}
-          asChild
-        >
-          <Pressable className="bg-white rounded-lg p-4 mb-3 shadow-md">
-            <Text className="text-lg font-bold text-black">{ex}</Text>
+        <Link key={ex} href={`/exercise/${ex.replace(" ", "-")}`} asChild>
+          <Pressable className="bg-white rounded-xl p-4 mb-3">
+            <Text className="text-lg font-semibold text-black">{ex}</Text>
           </Pressable>
         </Link>
       ))}
