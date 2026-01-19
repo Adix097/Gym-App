@@ -1,7 +1,7 @@
-import { View, Text, Pressable, FlatList } from "react-native";
-import { Link } from "expo-router";
+import { View, Text, FlatList } from "react-native";
 
 import LoginLink from "../components/LoginLink";
+import ExerciseCard from "../components/ExerciseCard";
 
 import useExercises from "../hooks/useExercises";
 
@@ -32,20 +32,7 @@ export default function Dashboard() {
         data={exercises}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <Link
-            key={item.name}
-            href={`/screens/Exercise/${item.name.replace(" ", "-")}`}
-            asChild
-          >
-            <Pressable className="bg-white rounded-xl p-4 mb-3">
-              <Text className="text-lg font-semibold text-black">
-                {item.name}
-              </Text>
-              {item.description ? (
-                <Text className="text-black mt-1">{item.description}</Text>
-              ) : null}
-            </Pressable>
-          </Link>
+          <ExerciseCard exercise={item}/>
         )}
       />
     </View>
