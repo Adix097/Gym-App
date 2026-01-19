@@ -1,33 +1,12 @@
-import { useEffect, useState } from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import { Link } from "expo-router";
 
 import LoginLink from "../components/LoginLink";
 
-const BASE_URL = "http://192.168.1.8:5000";
+import useExercises from "../hooks/useExercises";
 
 export default function Dashboard() {
-  const [exercises, setExercises] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    async function fetchExercises() {
-      try {
-        const res = await fetch(`${BASE_URL}/exercises`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        setExercises(data);
-      } catch (err) {
-        console.error("Failed to load exercises:", err);
-        setError("Could not load exercises.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchExercises();
-  }, []);
+  const { data: exercises, loading, error } = useExercises();
 
   if (loading) {
     return (
