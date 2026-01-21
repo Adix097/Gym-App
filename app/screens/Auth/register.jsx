@@ -2,7 +2,7 @@ import { View, Text, TextInput, Pressable } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 
-const BASE_URL = "http://192.168.1.8:5000";
+const BASE_URL = "https://gardant-unvain-arletta.ngrok-free.dev";
 
 export default function Register() {
   const router = useRouter();

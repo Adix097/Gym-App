@@ -74,8 +74,3 @@ backend/database/*.json
 
 # Allow example data
 !backend/database/*.example.json
-
-# ======================
-# Misc
-# ======================
-start.js

@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.1.8:5000";
+const BASE_URL = "https://gardant-unvain-arletta.ngrok-free.dev";
 
 export default async function getExercises() {
   const res = await fetch(`${BASE_URL}/exercises`);
