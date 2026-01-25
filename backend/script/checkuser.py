@@ -1,10 +1,10 @@
-from app import app, User
+from app import app, load_users
 
 with app.app_context():
-    users = User.query.all()
+    users = load_users()
 
     if not users:
         print("No users found.")
     else:
         for u in users:
-            print(f"ID={u.id} USERNAME={u.username}")
+            print(f"ID={u['id']} USERNAME={u['username']}")

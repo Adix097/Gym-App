@@ -116,3 +116,4 @@ linux/
 # database
 /lib/data
 *.db
+users.json

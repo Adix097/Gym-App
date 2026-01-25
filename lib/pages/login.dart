@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (result != null) {
         await AuthStorage.saveUser(
-          result["ID"],
+          result["user_id"],
           username,
         );
 
@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white, size: 22),
           onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            Navigator.pushNamedAndRemoveUntil(context, '/landing', (route) => false);
           },
         ),
         title: const Text('Login', style: TextStyle(color: Colors.white)),
@@ -107,6 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                 placeholder: "Password",
                 placeholderColor: Colors.grey,
                 backgroundColor: Colors.grey.shade900,
+                obscureText: true,
               ),
               const SizedBox(height: 24),
 
@@ -123,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                 text: _loading ? 'Logging in...' : 'Login',
                 textSize: 18,
                 textColor: Colors.black,
-                backgroundColor: Colors.teal,
+                backgroundColor: Color.fromARGB(255, 221, 217, 42),
                 borderRadius: 24,
                 onPressed: _loading ? null : _login,
               ),
@@ -131,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
               CustomButton(
                 text: 'Create account',
                 textSize: 18,
-                textColor: Colors.teal,
+                textColor: Color.fromARGB(255, 221, 217, 42),
                 backgroundColor: Colors.transparent,
                 onPressed: () {
                   Navigator.pushNamed(context, "/register");

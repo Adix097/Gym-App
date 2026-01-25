@@ -70,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
           onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            Navigator.pushNamedAndRemoveUntil(context, '/landing', (route) => false);
           },
         ),
         title: const Text('Register', style: TextStyle(color: Colors.white)),
@@ -107,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 text: _loading ? 'Registering...' : 'Register',
                 textSize: 18,
                 textColor: Colors.black,
-                backgroundColor: Colors.teal,
+                backgroundColor: Color.fromARGB(255, 221, 217, 42),
                 borderRadius: 24,
                 onPressed: _loading ? null : _register,
               ),
@@ -115,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
               CustomButton(
                 text: 'Already have an account? Login',
                 textSize: 18,
-                textColor: Colors.teal,
+                textColor: Color.fromARGB(255, 221, 217, 42),
                 backgroundColor: Colors.transparent,
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, "/login");

@@ -5,10 +5,12 @@ import os
 import uuid
 import hashlib
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE_DIR = os.path.join(BASE_DIR, "database")
+USERS_FILE = os.path.join(DATABASE_DIR, "users.json")
+
 app = Flask(__name__)
 CORS(app)
-
-USERS_FILE = "users.json"
 
 # ---------- helpers ----------
 
@@ -30,16 +32,21 @@ def hash_password(password):
 @app.route("/register", methods=["POST"])
 def register():
     data = request.get_json(silent=True)
+    print("DATA:", data)
     if not data:
         return jsonify({"error": "Invalid JSON"}), 400
 
     username = data.get("username")
     password = data.get("password")
+    
+    print("USERNAME:", repr(username))
+    print("USERS FILE PATH:", USERS_FILE)
 
     if not username or not password:
         return jsonify({"error": "Username and password required"}), 400
 
     users = load_users()
+    print("EXISTING USERS:", users)
 
     if any(u["username"] == username for u in users):
         return jsonify({"error": "User already exists"}), 400

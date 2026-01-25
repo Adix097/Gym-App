@@ -16,4 +16,9 @@ class AuthStorage {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
+
+  static Future<String?> getUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("username");
+  }
 }
