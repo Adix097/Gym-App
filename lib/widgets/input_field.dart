@@ -7,6 +7,7 @@ class InputField extends StatelessWidget {
   final Color backgroundColor;
   final double borderRadius;
   final TextEditingController controller;
+  final bool obscureText;
 
   const InputField({
     super.key,
@@ -16,12 +17,14 @@ class InputField extends StatelessWidget {
     this.filled = true,
     this.backgroundColor = Colors.black,
     this.borderRadius = 8,
+    this.obscureText = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      obscureText: obscureText,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: placeholder,

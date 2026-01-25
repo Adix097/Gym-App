@@ -1,34 +1,32 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
-import os
 import json
+import os
+import uuid
+import hashlib
 
-# ----------------- APP SETUP -----------------
 app = Flask(__name__)
-
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret")
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db = SQLAlchemy(app)
 CORS(app)
 
-# ----------------- PATHS -----------------
-BASE_DIR = os.path.dirname(__file__)
-DB_FOLDER = os.path.join(BASE_DIR, "../database")
-EXERCISES_FILE = os.path.join(DB_FOLDER, "exercises.json")
+USERS_FILE = "users.json"
 
-os.makedirs(DB_FOLDER, exist_ok=True)
+# ---------- helpers ----------
 
-# ----------------- MODELS -----------------
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return []
+    with open(USERS_FILE, "r") as f:
+        return json.load(f)
 
-# ----------------- ROUTES -----------------
+def save_users(users):
+    with open(USERS_FILE, "w") as f:
+        json.dump(users, f, indent=2)
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+# ---------- routes ----------
+
 @app.route("/register", methods=["POST"])
 def register():
     data = request.get_json(silent=True)
@@ -41,16 +39,21 @@ def register():
     if not username or not password:
         return jsonify({"error": "Username and password required"}), 400
 
-    if User.query.filter_by(username=username).first():
+    users = load_users()
+
+    if any(u["username"] == username for u in users):
         return jsonify({"error": "User already exists"}), 400
 
-    hashed_password = generate_password_hash(password)
-    user = User(username=username, password=hashed_password)
+    user = {
+        "id": str(uuid.uuid4()),
+        "username": username,
+        "password": hash_password(password)
+    }
 
-    db.session.add(user)
-    db.session.commit()
+    users.append(user)
+    save_users(users)
 
-    return jsonify({"message": "User registered"}), 201
+    return jsonify({"message": "Registered"}), 201
 
 
 @app.route("/login", methods=["POST"])
@@ -62,36 +65,35 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    if not username or not password:
-        return jsonify({"error": "Username and password required"}), 400
+    users = load_users()
+    hashed = hash_password(password)
 
-    user = User.query.filter_by(username=username).first()
-
-    if user and check_password_hash(user.password, password):
-        return jsonify({
-            "session": "demo",
-            "user_id": user.id
-        }), 200
+    for u in users:
+        if u["username"] == username and u["password"] == hashed:
+            return jsonify({
+                "logged_in": True,
+                "user_id": u["id"],
+                "username": u["username"]
+            }), 200
 
     return jsonify({"error": "Invalid credentials"}), 401
 
 
-@app.route("/exercises", methods=["GET"])
-def get_exercises():
-    if not os.path.exists(EXERCISES_FILE):
-        return jsonify([])
+@app.route("/me", methods=["POST"])
+def me():
+    data = request.get_json(silent=True)
+    user_id = data.get("user_id")
 
-    try:
-        with open(EXERCISES_FILE, "r") as f:
-            data = json.load(f)
-        return jsonify(data)
-    except Exception:
-        return jsonify({"error": "Failed to load exercises"}), 500
+    users = load_users()
+    for u in users:
+        if u["id"] == user_id:
+            return jsonify({
+                "logged_in": True,
+                "username": u["username"]
+            })
+
+    return jsonify({"logged_in": False}), 401
 
 
-# ----------------- RUN -----------------
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(port=5000, debug=True)

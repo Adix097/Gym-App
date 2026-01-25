@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:gym_app_flutter/services/auth_storage.dart";
 
 import "../widgets/input_field.dart";
 import "../widgets/custom_button.dart";
@@ -30,19 +31,25 @@ class _LoginPageState extends State<LoginPage> {
     if (username.isEmpty || password.isEmpty) {
       setState(() {
         _loading = false;
-        _error = "Username and Password are required!!";
+        _error = "Username and Password are required!";
       });
       return;
     }
 
     try {
-      final userID = await ApiService.login(username, password);
+      final result = await ApiService.login(username, password);
+      
       setState(() {
         _loading = false;
       });
 
-      if (userID != null) {
-        Navigator.pushReplacementNamed(context, "/dashboard", arguments: userID);
+      if (result != null) {
+        await AuthStorage.saveUser(
+          result["ID"],
+          username,
+        );
+
+        Navigator.pushReplacementNamed(context, "/dashboard");
       } else {
         setState(() {
           _error = "Invalid username or password";
