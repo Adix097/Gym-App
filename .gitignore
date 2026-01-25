@@ -106,3 +106,9 @@ app.*.map.json
 .svn/
 .swiftpm/
 migrate_working_dir/
+
+# unused platforms
+web/
+windows/
+macos/
+linux/
