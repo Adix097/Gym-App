@@ -112,3 +112,7 @@ web/
 windows/
 macos/
 linux/
+
+# database
+/lib/data
+*.db

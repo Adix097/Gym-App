@@ -2,9 +2,67 @@ import "package:flutter/material.dart";
 
 import "../widgets/input_field.dart";
 import "../widgets/custom_button.dart";
+import '../services/api.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _loading = false;
+  String? _error;
+
+  void _login() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (username.isEmpty || password.isEmpty) {
+      setState(() {
+        _loading = false;
+        _error = "Username and Password are required!!";
+      });
+      return;
+    }
+
+    try {
+      final userID = await ApiService.login(username, password);
+      setState(() {
+        _loading = false;
+      });
+
+      if (userID != null) {
+        Navigator.pushReplacementNamed(context, "/dashboard", arguments: userID);
+      } else {
+        setState(() {
+          _error = "Invalid username or password";
+        });
+      }
+    } catch (error) {
+      setState(() {
+        _loading = false;
+        _error = "Login failed: $error";
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +73,7 @@ class LoginPage extends StatelessWidget {
         backgroundColor: Colors.black,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: 22),
           onPressed: () {
             Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
           },
@@ -30,6 +88,7 @@ class LoginPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               InputField(
+                controller: _usernameController,
                 placeholder: "Username",
                 placeholderColor: Colors.grey,
                 backgroundColor: Colors.grey.shade900,
@@ -37,21 +96,29 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 16),
 
               InputField(
+                controller: _passwordController,
                 placeholder: "Password",
                 placeholderColor: Colors.grey,
                 backgroundColor: Colors.grey.shade900,
               ),
               const SizedBox(height: 24),
 
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Text(
+                    _error!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+
               CustomButton(
-                text: 'Login',
+                text: _loading ? 'Logging in...' : 'Login',
                 textSize: 18,
                 textColor: Colors.black,
                 backgroundColor: Colors.teal,
                 borderRadius: 24,
-                onPressed: () {
-                  print("Pressed!");
-                },
+                onPressed: _loading ? null : _login,
               ),
 
               CustomButton(

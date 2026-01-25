@@ -6,10 +6,12 @@ class InputField extends StatelessWidget {
   final bool filled;
   final Color backgroundColor;
   final double borderRadius;
+  final TextEditingController controller;
 
   const InputField({
     super.key,
     required this.placeholder,
+    required this.controller,
     this.placeholderColor = Colors.white,
     this.filled = true,
     this.backgroundColor = Colors.black,
@@ -19,6 +21,7 @@ class InputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: placeholder,

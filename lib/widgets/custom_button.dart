@@ -8,7 +8,7 @@ class CustomButton extends StatelessWidget {
   final double? borderWidth;
   final Color? borderColor;
   final double borderRadius;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const CustomButton({
     super.key,

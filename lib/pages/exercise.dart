@@ -6,7 +6,7 @@ import '../models/exercise_config.dart';
 import '../../widgets/camera_frame.dart';
 import '../../widgets/exercise_status.dart';
 
-import '../../services/camera_services.dart';
+import '../services/camera_functions.dart';
 
 class ExercisePage extends StatefulWidget {
   final Exercise exercise;
