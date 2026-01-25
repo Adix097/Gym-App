@@ -12,6 +12,7 @@ class CameraService {
 
   final List<CameraDescription> cameras;
   Function(Offset, Size)? onPoseDetected;
+  Function(Body, Size)? onBodyDetected;
 
   CameraService({required this.cameras});
 
@@ -115,6 +116,8 @@ class CameraService {
     }
 
     printAllLandmarks(landmarks);
+
+    onBodyDetected?.call(body, Size(image.width.toDouble(), image.height.toDouble()));
   }
 
   // ---------- Camera image conversion ----------

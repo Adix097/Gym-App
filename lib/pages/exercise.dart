@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
 import '../models/exercise_config.dart';
+import '../models/body_models.dart';
 
 import '../../widgets/camera_frame.dart';
 import '../../widgets/exercise_status.dart';
@@ -28,6 +29,7 @@ class _ExercisePageState extends State<ExercisePage> {
   late Future<void> _cameraInitFuture;
   Offset? nosePosition;
   Size? imageSize;
+  Body? body;
 
   int target = 0;
   int count = 5;
@@ -45,6 +47,14 @@ class _ExercisePageState extends State<ExercisePage> {
 
       setState(() {
         nosePosition = nose;
+        this.imageSize = imageSize;
+      });
+    };
+
+    // Set up callback for body detection
+    cameraService.onBodyDetected = (Body body, Size imageSize) {
+      setState(() {
+        this.body = body;
         this.imageSize = imageSize;
       });
     };
@@ -108,6 +118,7 @@ class _ExercisePageState extends State<ExercisePage> {
                   nosePosition: nosePosition,
                   imageSize: imageSize,
                   currentCamera: cameraService.currentCamera,
+                  body: body,
                 ),
               ),
               const SizedBox(height: 20),
