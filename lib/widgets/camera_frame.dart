@@ -41,28 +41,7 @@ class CameraFrame extends StatelessWidget {
           }
         }
 
-        return Stack(
-          children: [
-            CameraPreview(controller),
-            if (nosePosition != null && imageSize != null)
-              Positioned(
-                left:
-                    offsetX +
-                    (currentCamera.lensDirection == CameraLensDirection.front
-                        ? (imageSize!.width - nosePosition!.dx) * scale
-                        : nosePosition!.dx * scale),
-                top: offsetY + nosePosition!.dy * scale,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-          ],
-        );
+        return Stack(children: [CameraPreview(controller)]);
       },
     );
   }

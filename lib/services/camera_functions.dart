@@ -3,6 +3,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 
+import '../models/body_models.dart';
+
 class CameraService {
   late CameraController controller;
   late PoseDetector poseDetector;
@@ -36,23 +38,86 @@ class CameraService {
     controller.startImageStream(processImage);
   }
 
-  // Process each frame for nose detection
+  // ---------- Process each frame ----------
   void processImage(CameraImage image) async {
+    if (onPoseDetected == null) return;
+
     final inputImage = _convertCameraImage(image);
     final poses = await poseDetector.processImage(inputImage);
+    if (poses.isEmpty) return;
 
-    if (poses.isNotEmpty) {
-      final nose = poses.first.landmarks[PoseLandmarkType.nose];
-      if (nose != null && onPoseDetected != null) {
-        onPoseDetected!(
-          Offset(nose.x, nose.y),
-          Size(image.width.toDouble(), image.height.toDouble()),
-        );
-        print("Nose position: ${nose.x}, ${nose.y}");
+    final landmarks = poses.first.landmarks;
+
+    Offset? point(PoseLandmarkType type) {
+      final lm = landmarks[type];
+      return lm == null ? null : Offset(lm.x, lm.y);
+    }
+
+    final body = Body(
+      nose: point(PoseLandmarkType.nose),
+      left: BodySide(
+        shoulder: point(PoseLandmarkType.leftShoulder),
+        elbow: point(PoseLandmarkType.leftElbow),
+        wrist: point(PoseLandmarkType.leftWrist),
+        hip: point(PoseLandmarkType.leftHip),
+        knee: point(PoseLandmarkType.leftKnee),
+        ankle: point(PoseLandmarkType.leftAnkle),
+      ),
+      right: BodySide(
+        shoulder: point(PoseLandmarkType.rightShoulder),
+        elbow: point(PoseLandmarkType.rightElbow),
+        wrist: point(PoseLandmarkType.rightWrist),
+        hip: point(PoseLandmarkType.rightHip),
+        knee: point(PoseLandmarkType.rightKnee),
+        ankle: point(PoseLandmarkType.rightAnkle),
+      ),
+      face: Face(
+        leftEye: point(PoseLandmarkType.leftEye),
+        rightEye: point(PoseLandmarkType.rightEye),
+        leftEar: point(PoseLandmarkType.leftEar),
+        rightEar: point(PoseLandmarkType.rightEar),
+        mouthLeft: point(PoseLandmarkType.leftMouth),
+        mouthRight: point(PoseLandmarkType.rightMouth),
+      ),
+      hands: Hands(
+        left: Hand(
+          thumb: point(PoseLandmarkType.leftThumb),
+          index: point(PoseLandmarkType.leftIndex),
+          pinky: point(PoseLandmarkType.leftPinky),
+        ),
+        right: Hand(
+          thumb: point(PoseLandmarkType.rightThumb),
+          index: point(PoseLandmarkType.rightIndex),
+          pinky: point(PoseLandmarkType.rightPinky),
+        ),
+      ),
+      feet: Feet(
+        left: Foot(
+          heel: point(PoseLandmarkType.leftHeel),
+          index: point(PoseLandmarkType.leftFootIndex),
+        ),
+        right: Foot(
+          heel: point(PoseLandmarkType.rightHeel),
+          index: point(PoseLandmarkType.rightFootIndex),
+        ),
+      ),
+    );
+
+    void printAllLandmarks(Map<PoseLandmarkType, PoseLandmark?> landmarks) {
+      for (final entry in landmarks.entries) {
+        final lm = entry.value;
+        if (lm != null) {
+          print("${entry.key}: (${lm.x}, ${lm.y})");
+        } else {
+          print("${entry.key}: null");
+        }
       }
     }
+
+    printAllLandmarks(landmarks);
   }
 
+  // ---------- Camera image conversion ----------
   InputImage _convertCameraImage(CameraImage image) {
     final bytesBuilder = BytesBuilder();
     for (final plane in image.planes) {
@@ -72,7 +137,7 @@ class CameraService {
     );
   }
 
-  // Flip front/back camera
+  // ---------- Flip front/back camera ----------
   Future<void> flipCamera() async {
     final newLensDirection =
         currentCamera.lensDirection == CameraLensDirection.back
@@ -98,9 +163,7 @@ class CameraService {
     );
 
     await controller.initialize();
-
     await Future.delayed(const Duration(milliseconds: 300));
-
     controller.startImageStream(processImage);
   }
 
