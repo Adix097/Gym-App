@@ -75,16 +75,19 @@ class _ExercisePageState extends State<ExercisePage> {
 
     cameraService = CameraService(cameras: widget.cameras);
     target = widget.exercise.target;
+    final exerciseName = widget.exercise.name.toLowerCase().replaceAll(
+      RegExp(r'\s+'),
+      '',
+    );
 
-    switch (widget.exercise.name.toLowerCase()) {
-      case "pushup":
-        validator = PushUpValidator();
-        break;
-      case "plank":
-        validator = PlankValidator();
-        break;
-      default:
-        throw Exception("No validator for this exercise");
+    if (exerciseName.contains("push")) {
+      validator = PushUpValidator();
+    } else if (exerciseName.contains("plank")) {
+      validator = PlankValidator();
+    } else {
+      throw Exception(
+        "No validator for this exercise: ${widget.exercise.name}",
+      );
     }
 
     // Set up callback for body detection
