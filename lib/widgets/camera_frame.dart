@@ -6,7 +6,6 @@ import 'skeleton_overlay.dart';
 
 class CameraFrame extends StatelessWidget {
   final CameraController controller;
-  final Offset? nosePosition;
   final Size? imageSize;
   final CameraDescription currentCamera;
   final Body? body;
@@ -14,7 +13,6 @@ class CameraFrame extends StatelessWidget {
   const CameraFrame({
     super.key,
     required this.controller,
-    this.nosePosition,
     this.imageSize,
     required this.currentCamera,
     this.body,

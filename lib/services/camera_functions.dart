@@ -11,37 +11,44 @@ class CameraService {
   late CameraDescription currentCamera;
 
   final List<CameraDescription> cameras;
-  Function(Offset, Size)? onPoseDetected;
   Function(Body, Size)? onBodyDetected;
 
   CameraService({required this.cameras});
 
   Future<void> initialize() async {
-    currentCamera = cameras.firstWhere(
-      (c) => c.lensDirection == CameraLensDirection.front,
-      orElse: () => cameras.first,
-    );
+    try {
+      if (cameras.isEmpty) {
+        throw Exception('No cameras available on this device');
+      }
 
-    controller = CameraController(
-      currentCamera,
-      ResolutionPreset.medium,
-      enableAudio: false,
-    );
+      currentCamera = cameras.firstWhere(
+        (c) => c.lensDirection == CameraLensDirection.front,
+        orElse: () => cameras.first,
+      );
 
-    await controller.initialize();
+      controller = CameraController(
+        currentCamera,
+        ResolutionPreset.medium,
+        enableAudio: false,
+      );
 
-    poseDetector = PoseDetector(
-      options: PoseDetectorOptions(mode: PoseDetectionMode.stream),
-    );
+      await controller.initialize();
 
-    await Future.delayed(const Duration(milliseconds: 300));
+      poseDetector = PoseDetector(
+        options: PoseDetectorOptions(mode: PoseDetectionMode.stream),
+      );
 
-    controller.startImageStream(processImage);
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      controller.startImageStream(processImage);
+    } catch (e) {
+      throw Exception('Camera initialization failed: $e');
+    }
   }
 
   // ---------- Process each frame ----------
   void processImage(CameraImage image) async {
-    if (onPoseDetected == null) return;
+    if (onBodyDetected == null) return;
 
     final inputImage = _convertCameraImage(image);
     final poses = await poseDetector.processImage(inputImage);
@@ -104,19 +111,6 @@ class CameraService {
       ),
     );
 
-    void printAllLandmarks(Map<PoseLandmarkType, PoseLandmark?> landmarks) {
-      for (final entry in landmarks.entries) {
-        final lm = entry.value;
-        if (lm != null) {
-          print("${entry.key}: (${lm.x}, ${lm.y})");
-        } else {
-          print("${entry.key}: null");
-        }
-      }
-    }
-
-    printAllLandmarks(landmarks);
-
     onBodyDetected?.call(body, Size(image.width.toDouble(), image.height.toDouble()));
   }
 
@@ -142,32 +136,36 @@ class CameraService {
 
   // ---------- Flip front/back camera ----------
   Future<void> flipCamera() async {
-    final newLensDirection =
-        currentCamera.lensDirection == CameraLensDirection.back
-        ? CameraLensDirection.front
-        : CameraLensDirection.back;
+    try {
+      final newLensDirection =
+          currentCamera.lensDirection == CameraLensDirection.back
+          ? CameraLensDirection.front
+          : CameraLensDirection.back;
 
-    final newCamera = cameras.firstWhere(
-      (c) => c.lensDirection == newLensDirection,
-      orElse: () => cameras.first,
-    );
+      final newCamera = cameras.firstWhere(
+        (c) => c.lensDirection == newLensDirection,
+        orElse: () => cameras.first,
+      );
 
-    if (newCamera == currentCamera) return;
+      if (newCamera == currentCamera) return;
 
-    await controller.stopImageStream();
-    await controller.dispose();
+      await controller.stopImageStream();
+      await controller.dispose();
 
-    currentCamera = newCamera;
+      currentCamera = newCamera;
 
-    controller = CameraController(
-      currentCamera,
-      ResolutionPreset.medium,
-      enableAudio: false,
-    );
+      controller = CameraController(
+        currentCamera,
+        ResolutionPreset.medium,
+        enableAudio: false,
+      );
 
-    await controller.initialize();
-    await Future.delayed(const Duration(milliseconds: 300));
-    controller.startImageStream(processImage);
+      await controller.initialize();
+      await Future.delayed(const Duration(milliseconds: 300));
+      controller.startImageStream(processImage);
+    } catch (e) {
+      throw Exception('Camera flip failed: $e');
+    }
   }
 
   void dispose() {

@@ -43,9 +43,9 @@ class _LoginPageState extends State<LoginPage> {
         _loading = false;
       });
 
-      if (result != null) {
+      if (result != null && result.containsKey("user_id")) {
         await AuthStorage.saveUser(
-          result["user_id"],
+          result["user_id"] as String,
           username,
         );
 
