@@ -21,6 +21,7 @@ def load_users():
         return json.load(f)
 
 def save_users(users):
+    os.makedirs(DATABASE_DIR, exist_ok=True)
     with open(USERS_FILE, "w") as f:
         json.dump(users, f, indent=2)
 
@@ -32,21 +33,16 @@ def hash_password(password):
 @app.route("/register", methods=["POST"])
 def register():
     data = request.get_json(silent=True)
-    print("DATA:", data)
     if not data:
         return jsonify({"error": "Invalid JSON"}), 400
 
     username = data.get("username")
     password = data.get("password")
-    
-    print("USERNAME:", repr(username))
-    print("USERS FILE PATH:", USERS_FILE)
 
     if not username or not password:
         return jsonify({"error": "Username and password required"}), 400
 
     users = load_users()
-    print("EXISTING USERS:", users)
 
     if any(u["username"] == username for u in users):
         return jsonify({"error": "User already exists"}), 400
@@ -103,4 +99,5 @@ def me():
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)

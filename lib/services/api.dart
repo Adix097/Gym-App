@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = "https://gardant-unvain-arletta.ngrok-free.dev";
+  static const String baseUrl = "https://gym-app-production-12c1.up.railway.app";
 
   static Future<Map<String, dynamic>?> login(
     String username,
