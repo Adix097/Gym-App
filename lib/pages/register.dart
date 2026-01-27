@@ -40,7 +40,6 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() => _loading = false);
 
       if (success) {
-        // Navigate to login page after successful registration
         Navigator.pushReplacementNamed(context, "/login");
       } else {
         setState(() => _error = "Registration failed. User may already exist.");

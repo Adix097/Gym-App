@@ -7,11 +7,26 @@ class PushUpValidator extends ExerciseValidator {
   static const double downAngle = 90;
   static const double upAngle = 160;
   static const double backStraightThreshold = 165;
+  static const double confidenceThreshold = 0.6;
 
   @override
   Map<String, dynamic> update(PoseLandmarks lm, double timestamp) {
     if (!lm.has(["shoulder", "elbow", "wrist", "hip", "foot"])) {
       return {};
+    }
+
+    // Check that all key landmarks have sufficient confidence
+    if (!lm.hasAllConfidence(
+      ["shoulder", "elbow", "wrist", "hip", "foot"],
+      threshold: confidenceThreshold,
+    )) {
+      return {
+        "reps": reps,
+        "backStraight": false,
+        "elbowAngle": 0.0,
+        "backAngle": 0.0,
+        "lowConfidence": true,
+      };
     }
 
     final elbowAngle = calculateAngle(lm["shoulder"], lm["elbow"], lm["wrist"]);
@@ -34,6 +49,7 @@ class PushUpValidator extends ExerciseValidator {
       "backStraight": backStraight,
       "elbowAngle": elbowAngle,
       "backAngle": backAngle,
+      "lowConfidence": false,
     };
   }
 }

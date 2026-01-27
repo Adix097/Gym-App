@@ -50,6 +50,32 @@ class _ExercisePageState extends State<ExercisePage> {
     if (!leftOk && !rightOk) return null;
 
     final side = leftOk ? left : right;
+    final isLeftSide = leftOk;
+
+    final confidenceMap = <String, double>{};
+
+    // Copy only the confidence values for the selected side
+    for (final entry in body.landmarkConfidence.entries) {
+      final key = entry.key;
+      final isLeftKey = key.startsWith("left");
+
+      // Only include confidence for the side we're using
+      if (isLeftSide && !isLeftKey) continue;
+      if (!isLeftSide && isLeftKey) continue;
+
+      // Map full landmark names to our short names
+      if (key.contains("Shoulder")) {
+        confidenceMap["shoulder"] = entry.value;
+      } else if (key.contains("Elbow")) {
+        confidenceMap["elbow"] = entry.value;
+      } else if (key.contains("Wrist")) {
+        confidenceMap["wrist"] = entry.value;
+      } else if (key.contains("Hip")) {
+        confidenceMap["hip"] = entry.value;
+      } else if (key.contains("Ankle")) {
+        confidenceMap["foot"] = entry.value;
+      }
+    }
 
     return PoseLandmarks({
       "shoulder": Point(side.shoulder!.dx, side.shoulder!.dy),
@@ -57,7 +83,7 @@ class _ExercisePageState extends State<ExercisePage> {
       "wrist": Point(side.wrist!.dx, side.wrist!.dy),
       "hip": Point(side.hip!.dx, side.hip!.dy),
       "foot": Point(side.ankle!.dx, side.ankle!.dy),
-    });
+    }, confidence: confidenceMap);
   }
 
   late ExerciseValidator validator;
@@ -92,6 +118,7 @@ class _ExercisePageState extends State<ExercisePage> {
 
     // Set up callback for body detection
     cameraService.onBodyDetected = (Body body, Size imageSize) {
+
       final landmarks = _bodyToLandmarks(body);
       if (landmarks == null) return;
 
@@ -102,6 +129,13 @@ class _ExercisePageState extends State<ExercisePage> {
       setState(() {
         this.body = body;
         this.imageSize = imageSize;
+
+        // Check if detection confidence is low
+        if (result.containsKey("lowConfidence") &&
+            result["lowConfidence"] == true) {
+          status = "Poor Detection - Adjust Position";
+          return;
+        }
 
         if (result.containsKey("reps")) {
           count = result["reps"];

@@ -7,6 +7,7 @@ class Body {
   final Face face;
   final Hands hands;
   final Feet feet;
+  final Map<String, double> landmarkConfidence; // confidence scores for each landmark
 
   Body({
     required this.nose,
@@ -15,6 +16,7 @@ class Body {
     required this.face,
     required this.hands,
     required this.feet,
+    this.landmarkConfidence = const {},
   });
 }
 

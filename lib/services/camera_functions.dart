@@ -55,9 +55,13 @@ class CameraService {
     if (poses.isEmpty) return;
 
     final landmarks = poses.first.landmarks;
+    final Map<String, double> confidenceMap = {};
 
     Offset? point(PoseLandmarkType type) {
       final lm = landmarks[type];
+      if (lm != null) {
+        confidenceMap[type.name] = lm.likelihood;
+      }
       return lm == null ? null : Offset(lm.x, lm.y);
     }
 
@@ -109,6 +113,7 @@ class CameraService {
           index: point(PoseLandmarkType.rightFootIndex),
         ),
       ),
+      landmarkConfidence: confidenceMap,
     );
 
     onBodyDetected?.call(body, Size(image.width.toDouble(), image.height.toDouble()));

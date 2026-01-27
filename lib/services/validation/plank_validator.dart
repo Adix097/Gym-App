@@ -6,11 +6,25 @@ class PlankValidator extends ExerciseValidator {
   bool holding = false;
 
   static const double backStraightThreshold = 165;
+  static const double confidenceThreshold = 0.6; // Require 60% confidence for landmarks
 
   @override
   Map<String, dynamic> update(PoseLandmarks lm, double timestamp) {
     if (!lm.has(["shoulder", "hip", "foot"])) {
       return {};
+    }
+
+    // Check that all key landmarks have sufficient confidence
+    if (!lm.hasAllConfidence(
+      ["shoulder", "hip", "foot"],
+      threshold: confidenceThreshold,
+    )) {
+      return {
+        "holdTime": holding ? totalHoldTime + (timestamp - startTime!) : totalHoldTime,
+        "backStraight": false,
+        "backAngle": 0.0,
+        "lowConfidence": true,
+      };
     }
 
     final backAngle = calculateAngle(lm["shoulder"], lm["hip"], lm["foot"]);
@@ -37,6 +51,7 @@ class PlankValidator extends ExerciseValidator {
       "holdTime": currentTime,
       "backStraight": backStraight,
       "backAngle": backAngle,
+      "lowConfidence": false,
     };
   }
 }
